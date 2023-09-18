@@ -3,6 +3,7 @@ package com.example.rectrofitandroid
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.rectrofitandroid.api.QuoteService
 import com.example.rectrofitandroid.api.RetrofitHelper
@@ -16,14 +17,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val  TAG = "MainActivity3"
-        val quoteService = RetrofitHelper.getInstance().create(QuoteService::class.java)
-        val repository = QuoteRepository(quoteService)
+
+        val repository = (application as QuoteApplication).quoteRepository
 
         mainViewModel = ViewModelProvider(this, MainViewModelFactory(repository))[MainViewModel::class.java]
 
-        mainViewModel.quotes.observe(this, {
-            Log.d(TAG, "onCreate: "+ it.results.toString())
-        })
+        mainViewModel.quotes.observe(this) {
+            Log.d(TAG, "onCreate: " + it.results.toString())
+            Toast.makeText(this, it.results.size.toString(), Toast.LENGTH_LONG).show()
+        }
 
 
     }
